@@ -5,14 +5,22 @@ const CAT_ENDPOINT_RANDOM_FACT = "https://catfact.ninja/fact";
 export function App() {
   const [fact, setFact] = useState("lorem ipsum cat fact");
   const [imageUrl, setImageUrl] = useState();
+  const [factError, setFactError] = useState();
 
   // recuperar la cita al cargar la pagina
   useEffect(() => {
     fetch(CAT_ENDPOINT_RANDOM_FACT)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Error fetching fact");
+        return res.json;
+      })
       .then((data) => {
         const { fact } = data;
         setFact(fact);
+      })
+      .catch((err) => {
+        //tanto si hay error con la respuesta
+        // como si hay error con la petición
       });
   }, []);
 
