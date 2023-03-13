@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-
-const CAT_ENDPOINT_RANDOM_FACT = "https://catfact.ninja/fact";
+import { getRandomFact } from "./services/facts";
 
 export function App() {
   const [fact, setFact] = useState("lorem ipsum cat fact");
@@ -9,25 +8,12 @@ export function App() {
 
   // recuperar la cita al cargar la pagina
   useEffect(() => {
-    fetch(CAT_ENDPOINT_RANDOM_FACT)
-      .then((res) => {
-        if (!res.ok) throw new Error("Error fetching fact");
-        return res.json;
-      })
-      .then((data) => {
-        const { fact } = data;
-        setFact(fact);
-      })
-      .catch((err) => {
-        //tanto si hay error con la respuesta
-        // como si hay error con la petición
-      });
+    getRandomFact().then((newFact) => setFact(newFact));
   }, []);
 
   // recuperar la imagen cada vez que tenemos una cita nueva
   useEffect(() => {
     if (!fact) return;
-
     const firstWord = fact.split(" ", 3).join(" ");
 
     fetch(
@@ -40,11 +26,19 @@ export function App() {
       });
   }, [fact]);
 
+  const handleClick = async () => {
+    const newFact = await getRandomFact(setFact);
+    setFact(newFact);
+  };
+
   return (
     <main
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
       <h1>App de gatitos</h1>
+
+      <button onClick={handleClick}>Get new fact</button>
+
       {fact && <p>{fact}</p>}
       {imageUrl && <img src={imageUrl} alt="cat" />}
     </main>
