@@ -9,7 +9,9 @@ export function App() {
   // recuperar la cita al cargar la pagina
   useEffect(() => {
     fetch(CAT_ENDPOINT_RANDOM_FACT)
-      .then((res) => res.json())
+      .then((res) => {
+        return res.json;
+      })
       .then((data) => {
         const { fact } = data;
         setFact(fact);
